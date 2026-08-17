@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lotización</title>
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <style>
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+
+        /* Botón para ver el plano */
+        .boton-plano {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .boton-plano:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- MAPA -->
+    <div id="map"></div>
+
+
+    <!-- Leaflet JS -->
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+
+    <script>
+
+        // ==========================================
+        // CREAR MAPA
+        // ==========================================
+
+        const map = L.map('map').setView(
+            [-13.1605, -74.2195],
+            17
+        );
+
+
+        // ==========================================
+        // IMAGEN SATELITAL
+        // ==========================================
+
+        L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            {
+                attribution: '© Esri'
+            }
+        ).addTo(map);
+
+
+        // ==========================================
+        // CARGAR LOTES DESDE GEOJSON
+        // ==========================================
+
+        fetch('mapa.geojson')
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error(
+                        'No se pudo encontrar mapa.geojson'
+                    );
+                }
+
+                return response.json();
+
+            })
+
+            .then(data => {
+
+                L.geoJSON(data, {
+
+                    // ----------------------------------
+                    // ESTILO DE LOS LOTES
+                    // ----------------------------------
+
+                    style: {
+
+                        color: 'red',
+
+                        weight: 3,
+
+                        fillColor: 'yellow',
+
+                        fillOpacity: 0.30
+
+                    },
+
+
+                    // ----------------------------------
+                    // ACCIONES DE CADA LOTE
+                    // ----------------------------------
+
+                    onEachFeature: function(feature, layer) {
+
+                        // Obtener número/nombre del lote
+
+                        const lote =
+                            feature.properties.lote;
+
+
+                        // Ventana que aparece al tocar el lote
+
+                        layer.bindPopup(
+
+                            '<div style="text-align:center;">' +
+
+                            '<h3 style="margin:5px;">' +
+
+                            'LOTE ' + lote +
+
+                            '</h3>' +
+
+                            '<button ' +
+
+                            'class="boton-plano" ' +
+
+                            'onclick="verPlano(\'' +
+
+                            lote +
+
+                            '\')">' +
+
+                            'VER PLANO PERIMÉTRICO' +
+
+                            '</button>' +
+
+                            '</div>'
+
+                        );
+
+
+                        // ----------------------------------
+                        // EFECTO AL PASAR EL MOUSE
+                        // ----------------------------------
+
+                        layer.on({
+
+                            mouseover: function(e) {
+
+                                e.target.setStyle({
+
+                                    weight: 5,
+
+                                    fillOpacity: 0.50
+
+                                });
+
+                            },
+
+                            mouseout: function(e) {
+
+                                e.target.setStyle({
+
+                                    weight: 3,
+
+                                    fillOpacity: 0.30
+
+                                });
+
+                            }
+
+                        });
+
+                    }
+
+                }).addTo(map);
+
+            })
+
+
+            // ==========================================
+            // CONTROL DE ERRORES
+            // ==========================================
+
+            .catch(error => {
+
+                console.error(
+                    'Error cargando los lotes:',
+                    error
+                );
+
+            });
+
+
+        // ==========================================
+        // ABRIR PLANO PERIMÉTRICO
+        // ==========================================
+
+        function verPlano(lote) {
+
+            // Crear dirección del PDF
+
+            const archivo =
+                'plano/' + lote + '.pdf';
+
+
+            // Abrir el PDF en una nueva pestaña
+
+            window.open(
+                archivo,
+                '_blank'
+            );
+
+        }
+
+    </script>
+
+</body>
+</html>
