@@ -1,0 +1,23 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "lote": "A01"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-74.2200, -13.1600],
+            [-74.2190, -13.1600],
+            [-74.2190, -13.1610],
+            [-74.2200, -13.1610],
+            [-74.2200, -13.1600]
+          ]
+        ]
+      }
+    }
+  ]
+}
