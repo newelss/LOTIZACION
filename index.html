@@ -106,6 +106,42 @@
 
 
         // ==========================================
+        // ABRIR PDF AL TOCAR / HACER CLIC EN UN LOTE
+        // ==========================================
+        // Asume que cada lote tiene un PDF con el mismo nombre
+        // que la propiedad "lote" (ej: lote "A01" -> "A01.pdf"),
+        // guardado en una carpeta "planos/" junto al index.html.
+        // Si tus PDFs están en otro lugar o tienen otro nombre,
+        // avísame y ajusto la ruta.
+
+        const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+        handler.setInputAction(function (click) {
+
+            const pickedObject = viewer.scene.pick(click.position);
+
+            if (Cesium.defined(pickedObject) && pickedObject.id) {
+
+                const entity = pickedObject.id;
+
+                // El GeoJsonDataSource guarda las propiedades originales
+                // del feature dentro de entity.properties
+                if (entity.properties && entity.properties.lote) {
+
+                    const lote = entity.properties.lote.getValue();
+
+                    const rutaPdf = 'plano/' + lote + '.pdf';
+
+                    window.open(rutaPdf, '_blank');
+
+                }
+
+            }
+
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+
+        // ==========================================
         // UBICACIÓN DE TU LOTIZACIÓN (vista inicial de respaldo)
         // ==========================================
         // Esto se usa como referencia; si el geojson carga bien,
