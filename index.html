@@ -43,6 +43,20 @@
     <script>
 
         // ==========================================
+        // TOKEN DE CESIUM ION (OBLIGATORIO)
+        // ==========================================
+        // Sin este token, Cesium NO puede descargar el terreno
+        // ni las imágenes base, y por eso solo se ven las estrellas.
+        //
+        // Consigue tu token GRATIS aquí:
+        // https://ion.cesium.com/tokens
+        //
+        // Luego reemplaza el texto de abajo por tu token real.
+
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IkVVV0NucFRPU0JGcV8xVHkiLCJqdGkiOiIyOTEwNjRmMC00Y2ZjLTQ0YjYtYTI2Ny0wOTlmYzE1MWNjZTUiLCJpZCI6NDY4NjYyLCJpc3MiOiJodHRwczovL2FwaS5jZXNpdW0uY29tIiwiYXVkIjoidW5kZWZpbmVkX2RlZmF1bHQiLCJpYXQiOjE3ODY5MzEzMTJ9.2jaISC94sSIND12Uiwk8v5WublaKOhJt_sv_rDQpB5c';
+
+
+        // ==========================================
         // CREAR VISOR
         // ==========================================
 
@@ -67,8 +81,35 @@
 
 
         // ==========================================
-        // UBICACIÓN DE TU LOTIZACIÓN
+        // CARGAR TU LOTIZACIÓN (mapa.geojson)
         // ==========================================
+
+        Cesium.GeoJsonDataSource.load('mapa.geojson', {
+
+            stroke: Cesium.Color.YELLOW,
+            fill: Cesium.Color.YELLOW.withAlpha(0.3),
+            strokeWidth: 3,
+            clampToGround: true
+
+        }).then(function (dataSource) {
+
+            viewer.dataSources.add(dataSource);
+
+            // Volar la cámara automáticamente hacia los lotes cargados
+            viewer.flyTo(dataSource);
+
+        }).catch(function (error) {
+
+            console.log('Error cargando mapa.geojson:', error);
+
+        });
+
+
+        // ==========================================
+        // UBICACIÓN DE TU LOTIZACIÓN (vista inicial de respaldo)
+        // ==========================================
+        // Esto se usa como referencia; si el geojson carga bien,
+        // el flyTo(dataSource) de arriba tomará el control.
 
         viewer.camera.flyTo({
 
@@ -101,9 +142,5 @@
     </script>
 
 </body>
-<<<<<<< HEAD:Index.html
 
 </html>
-=======
-</html>
->>>>>>> f1eedd275c8b6d165fb85d98d934531ed326a322:index.html
